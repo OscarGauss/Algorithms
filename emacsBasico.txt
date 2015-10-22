@@ -1,0 +1,34 @@
+(global-linum-mode t)             ;mostrar numeros 
+(setq-default c-basic-offset 4 tab-width 4 indent-tabs-mode t) ;Espacios en lugar de Tabs
+(show-paren-mode t)               ;mostrar parentesis
+(electric-pair-mode t)
+(set-foreground-color "#EDEDED")
+(set-background-color "#333333")
+
+(require 'cc-mode)
+(global-set-key (kbd "RET") 'newline-and-indent)
+
+(defun compilar ()
+  (interactive)
+  (save-buffer)
+  (compile (concat "g++ \"" (buffer-name) "\" -o \"" (file-name-sans-extension (buffer-name)) "\" ") )
+)(define-key c-mode-base-map (kbd "M-p") 'compilar)
+
+(defun input ()
+  (interactive)
+  (split-window-horizontally)
+  (switch-to-buffer-other-window (buffer-name))
+  (find-file (concat (file-name-sans-extension (buffer-name)) ".in") )
+)(define-key c-mode-base-map (kbd "M-n") 'input)
+
+(defun ejecutar-input ()
+  (interactive)
+  (setq name (file-name-sans-extension(buffer-name)) )
+  (input)
+  (shell-command (format "./\"%s\" < \"%s.in\""  name name))
+)(define-key c-mode-base-map (kbd "M-=") 'ejecutar-input)
+
+(defun cerrar ()
+  (interactive)
+  (kill-buffer-and-window)
+)(global-set-key (kbd "M-0") 'cerrar)
